@@ -48,12 +48,16 @@ namespace JapTask1.Database.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<double>("PurchasedPrice")
+                        .HasMaxLength(64)
                         .HasColumnType("float");
 
                     b.Property<double>("PurchasedQuantity")
+                        .HasMaxLength(64)
                         .HasColumnType("float");
 
                     b.Property<int>("PurchasedUnitOfMeasure")
@@ -82,6 +86,9 @@ namespace JapTask1.Database.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UsageCount")
+                        .HasColumnType("int");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");

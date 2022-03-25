@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JapTask1.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220318142001_ChangeToIngredient")]
-    partial class ChangeToIngredient
+    [Migration("20220325133016_InitialMigration2")]
+    partial class InitialMigration2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,6 +27,9 @@ namespace JapTask1.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -47,16 +50,20 @@ namespace JapTask1.Database.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<double>("PurchasedPrice")
+                        .HasMaxLength(64)
                         .HasColumnType("float");
 
                     b.Property<double>("PurchasedQuantity")
+                        .HasMaxLength(64)
                         .HasColumnType("float");
 
-                    b.Property<string>("PurchasedUnitOfMeasure")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PurchasedUnitOfMeasure")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -82,6 +89,9 @@ namespace JapTask1.Database.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UsageCount")
+                        .HasColumnType("int");
+
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
@@ -94,7 +104,7 @@ namespace JapTask1.Database.Migrations
                     b.ToTable("Recipes");
                 });
 
-            modelBuilder.Entity("JapTask1.Core.Entities.Recipe_Ingredient", b =>
+            modelBuilder.Entity("JapTask1.Core.Entities.RecipeIngredient", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,8 +120,8 @@ namespace JapTask1.Database.Migrations
                     b.Property<int>("RecipeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Unit")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Unit")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -119,7 +129,7 @@ namespace JapTask1.Database.Migrations
 
                     b.HasIndex("RecipeId");
 
-                    b.ToTable("Recipes_Ingredients");
+                    b.ToTable("RecipesIngredients");
                 });
 
             modelBuilder.Entity("JapTask1.Core.Entities.User", b =>
@@ -129,7 +139,7 @@ namespace JapTask1.Database.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime?>("CreatedAt")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -163,16 +173,16 @@ namespace JapTask1.Database.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("JapTask1.Core.Entities.Recipe_Ingredient", b =>
+            modelBuilder.Entity("JapTask1.Core.Entities.RecipeIngredient", b =>
                 {
                     b.HasOne("JapTask1.Core.Entities.Ingredient", "Ingredient")
-                        .WithMany("Recipes_Ingredients")
+                        .WithMany("RecipesIngredients")
                         .HasForeignKey("IngredientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("JapTask1.Core.Entities.Recipe", "Recipe")
-                        .WithMany("Recipes_Ingredients")
+                        .WithMany("RecipesIngredients")
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -189,12 +199,12 @@ namespace JapTask1.Database.Migrations
 
             modelBuilder.Entity("JapTask1.Core.Entities.Ingredient", b =>
                 {
-                    b.Navigation("Recipes_Ingredients");
+                    b.Navigation("RecipesIngredients");
                 });
 
             modelBuilder.Entity("JapTask1.Core.Entities.Recipe", b =>
                 {
-                    b.Navigation("Recipes_Ingredients");
+                    b.Navigation("RecipesIngredients");
                 });
 
             modelBuilder.Entity("JapTask1.Core.Entities.User", b =>

@@ -14,8 +14,8 @@ namespace JapTask1.Database
         {
             builder.Property(x => x.Name).IsRequired().HasMaxLength(128);
             builder.Property(x => x.Description).IsRequired().HasMaxLength(1024);
-            builder.Property(x => x.Name).IsRequired().HasMaxLength(128);
-            builder.Property(x => x.Name).IsRequired().HasMaxLength(128);
+            builder.Property(x => x.CategoryId).IsRequired();
+            builder.Property(x => x.UserId).IsRequired();
         }
     }
 }

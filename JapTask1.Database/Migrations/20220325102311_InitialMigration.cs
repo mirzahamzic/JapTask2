@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace JapTask1.Database.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +13,8 @@ namespace JapTask1.Database.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -26,10 +27,10 @@ namespace JapTask1.Database.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PurchasedQuantity = table.Column<double>(type: "float", nullable: false),
-                    PurschasedPrice = table.Column<double>(type: "float", nullable: false),
-                    PurchasedUnitOfMeasure = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    PurchasedQuantity = table.Column<double>(type: "float", maxLength: 64, nullable: false),
+                    PurchasedPrice = table.Column<double>(type: "float", maxLength: 64, nullable: false),
+                    PurchasedUnitOfMeasure = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -46,7 +47,7 @@ namespace JapTask1.Database.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PasswordHash = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     PasswordSalt = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -61,9 +62,10 @@ namespace JapTask1.Database.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UsageCount = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true)
+                    UserId = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -83,7 +85,7 @@ namespace JapTask1.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Recipes_Ingredients",
+                name: "RecipesIngredients",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -91,19 +93,19 @@ namespace JapTask1.Database.Migrations
                     RecipeId = table.Column<int>(type: "int", nullable: false),
                     IngredientId = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<double>(type: "float", nullable: false),
-                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Unit = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Recipes_Ingredients", x => x.Id);
+                    table.PrimaryKey("PK_RecipesIngredients", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Recipes_Ingredients_Ingredients_IngredientId",
+                        name: "FK_RecipesIngredients_Ingredients_IngredientId",
                         column: x => x.IngredientId,
                         principalTable: "Ingredients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Recipes_Ingredients_Recipes_RecipeId",
+                        name: "FK_RecipesIngredients_Recipes_RecipeId",
                         column: x => x.RecipeId,
                         principalTable: "Recipes",
                         principalColumn: "Id",
@@ -121,20 +123,20 @@ namespace JapTask1.Database.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Recipes_Ingredients_IngredientId",
-                table: "Recipes_Ingredients",
+                name: "IX_RecipesIngredients_IngredientId",
+                table: "RecipesIngredients",
                 column: "IngredientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Recipes_Ingredients_RecipeId",
-                table: "Recipes_Ingredients",
+                name: "IX_RecipesIngredients_RecipeId",
+                table: "RecipesIngredients",
                 column: "RecipeId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Recipes_Ingredients");
+                name: "RecipesIngredients");
 
             migrationBuilder.DropTable(
                 name: "Ingredients");

@@ -18,6 +18,9 @@ namespace JapTask1.Database
             {
                 var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
 
+                List<Recipe> recipes = new List<Recipe>();
+
+
                 if (!context.Ingredients.Any())
                 {
                     context.Ingredients.AddRange(
@@ -172,33 +175,80 @@ namespace JapTask1.Database
                     await context.SaveChangesAsync();
                 }
 
+                if (!context.Users.Any())
+                {
+                    string password = "admin123456";
+                    User user = new()
+                    {
+                        Name = "Admin"
+                    };
 
+                    byte[] passwordSalt;
+                    byte[] passwordHash;
 
-                //if (!context.Users.Any())
-                //{
-                //    string password = "admin123456";
-                //    User user = new()
-                //    {
-                //        Name = "Admin"
-                //    };
+                    using (var hmac = new System.Security.Cryptography.HMACSHA512())
+                    {
+                        passwordSalt = hmac.Key;
+                        passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                    }
 
-                //    byte[] passwordSalt;
-                //    byte[] passwordHash;
+                    user.PasswordHash = passwordHash;
+                    user.PasswordSalt = passwordSalt;
+                    user.CreatedAt = DateTime.Now;
 
-                //    using (var hmac = new System.Security.Cryptography.HMACSHA512())
-                //    {
-                //        passwordSalt = hmac.Key;
-                //        passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                //    }
+                    context.Users.Add(user);
+                    await context.SaveChangesAsync();
 
-                //    user.PasswordHash = passwordHash;
-                //    user.PasswordSalt = passwordSalt;
-                //    user.Created_At = DateTime.Now;
+                };
 
-                //    context.Users.Add(user);
-                //    await context.SaveChangesAsync();
+                if (!context.Recipes.Any())
+                {
+                    //create random recipes
 
-                //};
+                    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+                    var recipeName = new char[8];
+                    var recipeDescription = new char[60];
+                    var random = new Random();
+                    var recipeList = new List<Recipe>();
+
+                    for (int i = 0; i < 50; i++)
+                    {
+
+                        for (int j = 0; j < recipeName.Length; j++)
+                        {
+                            recipeName[j] = chars[random.Next(chars.Length)];
+                        }
+
+                        for (int x = 0; x < recipeDescription.Length; x++)
+                        {
+                            recipeDescription[x] = chars[random.Next(chars.Length)];
+                        }
+
+                        var finalRecipeName = new String(recipeName);
+                        var finalDescription = new String(recipeDescription);
+
+                        recipeList.Add(new Recipe { Name = finalRecipeName, Description = finalDescription, CategoryId = random.Next(1, 6), UserId = 1 });
+                    }
+
+                    await context.Recipes.AddRangeAsync(recipeList);
+                    await context.SaveChangesAsync();
+                }
+
+                if (!context.RecipesIngredients.Any())
+                {
+                    //create random recipesingredient
+
+                    var random = new Random();
+                    var recipesIngredients = new List<RecipeIngredient>();
+
+                    for (int i = 0; i < 500; i++)
+                    {
+                        recipesIngredients.Add(new RecipeIngredient { IngredientId = random.Next(1, 7), RecipeId = random.Next(1, 50), Quantity = random.Next(10, 1000), Unit = Units.Gr });
+                    }
+
+                    await context.RecipesIngredients.AddRangeAsync(recipesIngredients);
+                    await context.SaveChangesAsync();
+                }
             }
         }
 

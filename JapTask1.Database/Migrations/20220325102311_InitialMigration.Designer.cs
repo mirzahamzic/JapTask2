@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace JapTask1.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220319123744_ChangeToRecipeIngredient")]
-    partial class ChangeToRecipeIngredient
+    [Migration("20220325102311_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -27,6 +27,9 @@ namespace JapTask1.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -47,16 +50,20 @@ namespace JapTask1.Database.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<double>("PurchasedPrice")
+                        .HasMaxLength(64)
                         .HasColumnType("float");
 
                     b.Property<double>("PurchasedQuantity")
+                        .HasMaxLength(64)
                         .HasColumnType("float");
 
-                    b.Property<string>("PurchasedUnitOfMeasure")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("PurchasedUnitOfMeasure")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -82,12 +89,17 @@ namespace JapTask1.Database.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UsageCount")
+                        .HasColumnType("int");
+
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Recipes");
                 });
@@ -108,8 +120,8 @@ namespace JapTask1.Database.Migrations
                     b.Property<int>("RecipeId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Unit")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Unit")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -120,13 +132,45 @@ namespace JapTask1.Database.Migrations
                     b.ToTable("RecipesIngredients");
                 });
 
+            modelBuilder.Entity("JapTask1.Core.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("varbinary(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("JapTask1.Core.Entities.Recipe", b =>
                 {
-                    b.HasOne("JapTask1.Core.Entities.Category", null)
+                    b.HasOne("JapTask1.Core.Entities.Category", "Category")
                         .WithMany("Recipes")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("JapTask1.Core.Entities.User", "User")
+                        .WithMany("Recipes")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("JapTask1.Core.Entities.RecipeIngredient", b =>
@@ -161,6 +205,11 @@ namespace JapTask1.Database.Migrations
             modelBuilder.Entity("JapTask1.Core.Entities.Recipe", b =>
                 {
                     b.Navigation("RecipesIngredients");
+                });
+
+            modelBuilder.Entity("JapTask1.Core.Entities.User", b =>
+                {
+                    b.Navigation("Recipes");
                 });
 #pragma warning restore 612, 618
         }
