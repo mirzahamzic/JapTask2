@@ -20,6 +20,9 @@ namespace JapTask1.Mapper
             .ForMember(dest => dest.Ingredients, o => o.MapFrom(src => src.RecipesIngredients))
             .ForMember(dest => dest.TotalCost, o => o.MapFrom(src => Calculator.RecipeTotalCost(src)));
 
+            CreateMap<Recipe, FirstSpDto>();
+            CreateMap<Recipe, SecondSpDto>();
+
 
             CreateMap<RecipeIngredient, GetIngredientDto>()
             .ForMember(dest => dest.Name, o => o.MapFrom(src => src.Ingredient.Name))
@@ -27,6 +30,7 @@ namespace JapTask1.Mapper
 
             CreateMap<Category, GetCategoryDto>();
             CreateMap<Ingredient, IngredientDto>();
+
 
         }
 

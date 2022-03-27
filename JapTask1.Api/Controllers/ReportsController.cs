@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using JapTask1.Core.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-
+using System.Threading.Tasks;
 
 namespace JapTask1.Api.Controllers
 {
@@ -8,36 +9,33 @@ namespace JapTask1.Api.Controllers
     [ApiController]
     public class ReportsController : ControllerBase
     {
+        private readonly IReportService _reportService;
+
+        public ReportsController(IReportService reportService)
+        {
+            _reportService = reportService;
+        }
+
         // GET: api/<ReportsController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        [HttpGet("firstStoredProcedure")]
+        public async Task<ActionResult> FirstSp()
         {
-            return new string[] { "value1", "value2" };
+            return Ok(await _reportService.FirstSp());
         }
 
-        // GET api/<ReportsController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        // GET: api/<ReportsController>
+        [HttpGet("secondStoredProcedure")]
+        public async Task<ActionResult> SecondSp()
         {
-            return "value";
+            return Ok(await _reportService.SecondSp());
         }
 
-        // POST api/<ReportsController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        // POST: api/<ReportsController>
+        [HttpGet("thirdStoredProcedure")]
+        public async Task<ActionResult> ThirdSp([FromQuery] double min, double max, int unit)
         {
+            return Ok(await _reportService.ThirdSp(min, max, unit));
         }
 
-        // PUT api/<ReportsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<ReportsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
     }
 }

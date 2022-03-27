@@ -1,4 +1,5 @@
 ﻿using JapTask1.Core.Interfaces;
+using JapTask1.Services;
 using JapTask1.Services.CategoryService;
 using JapTask1.Services.IngredientService;
 using JapTask1.Services.RecipeService;
@@ -15,6 +16,7 @@ namespace JapTask1.Api.Extensions
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IIngredientService, IngredientService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IReportService, ReportService>();
         }
     }
 }

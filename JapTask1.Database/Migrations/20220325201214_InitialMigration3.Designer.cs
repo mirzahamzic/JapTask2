@@ -4,51 +4,22 @@ using JapTask1.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JapTask1.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220325201214_InitialMigration3")]
+    partial class InitialMigration3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.15")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("JapTask1.Core.Dtos.FirstSpDto", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("RecipeTotalCost")
-                        .HasColumnType("float");
-
-                    b.Property<int>("TotalIngredients")
-                        .HasColumnType("int");
-
-                    b.ToView("View_FirstSpDto");
-                });
-
-            modelBuilder.Entity("JapTask1.Core.Dtos.SecondSpDto", b =>
-                {
-                    b.Property<string>("CategoryName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RecipeName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("RecipeTotalCost")
-                        .HasColumnType("float");
-
-                    b.ToView("View_SecondSpDto");
-                });
 
             modelBuilder.Entity("JapTask1.Core.Entities.Category", b =>
                 {

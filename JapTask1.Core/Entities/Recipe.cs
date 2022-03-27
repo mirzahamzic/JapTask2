@@ -12,8 +12,6 @@ namespace JapTask1.Core.Entities
 
         public string Description { get; set; }
 
-        public int UsageCount { get; set; }
-
         //Navigation properties
 
         //one-to-many between category and recipe
