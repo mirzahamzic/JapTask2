@@ -8,20 +8,31 @@ namespace JapTask1.Database.Migrations
         {
             var sp1 = @"CREATE procedure [dbo].[spRecipe_GetRecipesWith10Ingredients]
 
-						as 
-						begin
-							select Recipes.Name, Recipes.Id, 
-							sum((dbo.RecipesIngredients.Quantity * Ingredients.PurchasedPrice/Ingredients.PurchasedQuantity)/1000) as RecipeTotalCost, 
-							count(dbo.RecipesIngredients.IngredientId) as TotalIngredients
-							from Ingredients
-							join RecipesIngredients
-							on Ingredients.Id = RecipesIngredients.IngredientId
-							join Recipes
-							on Recipes.Id = RecipesIngredients.RecipeId
-							group by Recipes.Name, Recipes.Id
-							having count(dbo.RecipesIngredients.IngredientId)>=10
-							order by TotalIngredients desc
-						end";
+						AS
+						BEGIN
+	
+							SET NOCOUNT ON;
+						
+						select Recipes.Name, Recipes.Id, 
+						case
+							when dbo.RecipesIngredients.Unit = 1 OR dbo.RecipesIngredients.Unit=3 
+							then
+								sum((dbo.RecipesIngredients.Quantity * Ingredients.PurchasedPrice/Ingredients.PurchasedQuantity)/1000)
+							else
+								sum(dbo.RecipesIngredients.Quantity * Ingredients.PurchasedPrice/Ingredients.PurchasedQuantity)
+						end	
+						as RecipeTotalCost,
+						
+						count(dbo.RecipesIngredients.IngredientId) as TotalIngredients
+						from Ingredients
+						join RecipesIngredients
+						on Ingredients.Id = RecipesIngredients.IngredientId
+						join Recipes
+						on Recipes.Id = RecipesIngredients.RecipeId
+						group by Recipes.Name, Recipes.Id, dbo.RecipesIngredients.Unit
+						having count(dbo.RecipesIngredients.IngredientId)>=10
+						order by TotalIngredients desc
+						END";
 
             var sp2 = @"CREATE PROCEDURE [dbo].[spRecipe_GetAllByCategoryName]
 

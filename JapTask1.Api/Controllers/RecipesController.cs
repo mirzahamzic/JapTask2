@@ -26,16 +26,16 @@ namespace JapTask1.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] AddRecipeDto newRecipe)
+        public async Task<ActionResult> Create([FromBody] AddRecipeDto newRecipe)
         {
-            await _recipeService.Create(newRecipe);
-            return Ok(newRecipe);
+            var response = await _recipeService.Create(newRecipe);
+
+            return Ok(response);
         }
 
         [HttpGet]
         public async Task<ActionResult> Get([FromQuery] BaseSearch req)
         {
-
             return Ok(await _recipeService.Get(req));
         }
 
@@ -44,10 +44,6 @@ namespace JapTask1.Api.Controllers
         {
             var response = await _recipeService.GetById(id);
 
-            if (response.Data is null)
-            {
-                throw new System.Exception("Recipe does not exists.");
-            }
             return Ok(response);
         }
 

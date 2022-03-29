@@ -52,7 +52,6 @@ namespace JapTask1.Database
              {
                  eb.HasNoKey();
                  eb.ToView("View_FirstSpDto");
-                 //eb.Property(v => v.).HasColumnName("Name");
              });
 
             modelBuilder.Entity<SecondSpDto>(

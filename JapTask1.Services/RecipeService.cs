@@ -26,6 +26,8 @@ namespace JapTask1.Services.RecipeService
         private readonly IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
+        private readonly int userIdForTesting = 1; //set to 1 for testing, set to 0 for prod.
+
         public RecipeService(AppDbContext context, IMapper mapper, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
@@ -34,12 +36,34 @@ namespace JapTask1.Services.RecipeService
             _httpContextAccessor = httpContextAccessor;
         }
 
-
         //getting user id from token
-        private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-        public async Task Create(AddRecipeDto recipe)
+        //private int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+        private int GetUserId()
         {
+            if (userIdForTesting == 0)
+            {
+                return int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            }
+            else
+            {
+                return userIdForTesting;
+            }
+        }
+
+        public async Task<ServiceResponse<AddRecipeDto>> Create(AddRecipeDto recipe)
+        {
+
+            if (recipe.AddRecipeIngredientDto.Count == 0)
+            {
+                throw new ArgumentException("Recipe needs at least one ingredient.");
+            }
+
+            if (recipe.AddRecipeIngredientDto.GroupBy(x => x.IngredientId).Any(x => x.Count() > 1))
+            {
+                throw new ArgumentException("Can not add same ingredient");
+            }
+
+
             var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
 
             var newRecipe = new Recipe()
@@ -48,7 +72,7 @@ namespace JapTask1.Services.RecipeService
                 Description = recipe.Description,
                 CategoryId = recipe.CategoryId,
                 CreatedAt = DateTime.Now,
-                UserId = user.Id,
+                UserId = user != null ? user.Id : 1,
             };
 
             await _context.Recipes.AddAsync(newRecipe);
@@ -68,13 +92,15 @@ namespace JapTask1.Services.RecipeService
             }
             await _context.RecipesIngredients.AddRangeAsync(ingredientsToSave);
             await _context.SaveChangesAsync();
+
+            return new ServiceResponse<AddRecipeDto>()
+            {
+                Data = recipe,
+            };
         }
 
         public async Task<ServiceResponse<List<GetRecipeDto>>> Get([Optional] BaseSearch req)
         {
-            int pageSize;
-            pageSize = Int16.Parse(_configuration.GetSection("Pagination:Limit").Value);
-
             var query = _context.Recipes
                     .Include(r => r.Category)
                     .Include(r => r.RecipesIngredients)
@@ -86,10 +112,9 @@ namespace JapTask1.Services.RecipeService
             {
                 query = query
                     .Skip((int)req.Limit)
-                    .Take(pageSize)
+                    .Take((int)req.PageSize)
                     .AsQueryable();
             }
-
 
             var dbRecipes = await query
                     .Select(r => _mapper.Map<GetRecipeDto>(r))
@@ -103,9 +128,6 @@ namespace JapTask1.Services.RecipeService
 
         public async Task<ServiceResponse<List<GetRecipeDto>>> GetByCategory(int categoryId, [Optional] BaseSearch req)
         {
-            int pageSize;
-            pageSize = Int16.Parse(_configuration.GetSection("Pagination:Limit").Value);
-
             var query = _context.Recipes
                      .Include(r => r.Category)
                      .Include(r => r.RecipesIngredients)
@@ -117,7 +139,7 @@ namespace JapTask1.Services.RecipeService
             {
                 query = query
                     .Skip((int)req.Limit)
-                    .Take(pageSize)
+                    .Take((int)req.PageSize)
                     .AsQueryable();
             }
 
@@ -139,6 +161,11 @@ namespace JapTask1.Services.RecipeService
                 .ThenInclude(i => i.Ingredient)
                 .FirstOrDefaultAsync(r => r.Id == recipeId && r.UserId == GetUserId());
 
+            if (dbRecipes == null)
+            {
+                throw new ArgumentException("Ne postoji recept");
+            }
+
             return new ServiceResponse<GetRecipeDto>()
             {
                 Data = _mapper.Map<GetRecipeDto>(dbRecipes)
@@ -147,9 +174,6 @@ namespace JapTask1.Services.RecipeService
 
         public async Task<ServiceResponse<List<GetRecipeDto>>> Search([Optional] RecipeSearch req)
         {
-            int pageSize;
-            pageSize = Int16.Parse(_configuration.GetSection("Pagination:Limit").Value);
-
             var query = _context.Recipes
                  .Include(r => r.Category)
                  .Include(r => r.RecipesIngredients)
@@ -161,7 +185,7 @@ namespace JapTask1.Services.RecipeService
             {
                 query = query
                     .Skip((int)req.Limit)
-                    .Take(pageSize)
+                    .Take((int)req.PageSize)
                     .AsQueryable();
             }
 
