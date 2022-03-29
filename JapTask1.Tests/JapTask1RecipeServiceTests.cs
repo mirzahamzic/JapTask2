@@ -126,12 +126,47 @@ namespace JapTask1.Tests
             Assert.True(testRecipe.AddRecipeIngredientDto.Any());
         }
 
-        [TestCase(4)]
+        [TestCase(3)]
         public async Task TestLoadMore(int page_size)
         {
+            //arrange
 
+            var testIngredients = new List<AddRecipeIngredientDto>();
+            testIngredients.Add(new AddRecipeIngredientDto() { IngredientId = 1, Quantity = 200, Unit = Common.Enums.Units.Gr });
+
+            var testRecipe1 = new AddRecipeDto()
+            {
+                Name = "Test Recipe",
+                Description = "Test",
+                CategoryId = 1,
+                CreatedAt = DateTime.Now,
+                AddRecipeIngredientDto = testIngredients
+            };
+            var testRecipe2 = new AddRecipeDto()
+            {
+                Name = "Test Recipe",
+                Description = "Test",
+                CategoryId = 1,
+                CreatedAt = DateTime.Now,
+                AddRecipeIngredientDto = testIngredients
+            };
+            var testRecipe3 = new AddRecipeDto()
+            {
+                Name = "Test Recipe",
+                Description = "Test",
+                CategoryId = 1,
+                CreatedAt = DateTime.Now,
+                AddRecipeIngredientDto = testIngredients
+            };
+            await recipeService.Create(testRecipe1);
+            await recipeService.Create(testRecipe2);
+            await recipeService.Create(testRecipe3);
+
+            //act
             var result = await recipeService.Get(new BaseSearch { Limit = 0, PageSize = page_size });
 
+
+            //assert
             Assert.That(result.Data.Count, Is.EqualTo(page_size));
         }
 
