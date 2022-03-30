@@ -105,7 +105,7 @@ namespace JapTask1.Services.RecipeService
                     .Include(r => r.Category)
                     .Include(r => r.RecipesIngredients)
                     .ThenInclude(i => i.Ingredient)
-                    //.Where(r => r.User.Id == GetUserId())
+                    .Where(r => r.User.Id == GetUserId())
                     .AsQueryable();
 
             if (req.Limit != null)
