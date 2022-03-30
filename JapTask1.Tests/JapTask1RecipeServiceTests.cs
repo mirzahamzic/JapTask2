@@ -43,6 +43,8 @@ namespace JapTask1.Tests
             _context = new AppDbContext(_options);
 
             _recipeService = new RecipeService(_context, mockMapper.Object, mockConfiguration.Object, mockHttpContextAccessor.Object);
+
+            SetupDatabase();
         }
 
         [Test]
@@ -162,7 +164,7 @@ namespace JapTask1.Tests
         public async Task TestLoadMore(int page_size)
         {
             //arrange
-            SetupDatabase();
+
 
             //act
             var result = await _recipeService.Get(new BaseSearch { Limit = 0, PageSize = page_size });
@@ -171,7 +173,7 @@ namespace JapTask1.Tests
             Assert.That(result.Data.Count, Is.EqualTo(page_size));
         }
 
-        public async Task SetupDatabase()
+        public void SetupDatabase()
         {
             _context.Recipes.AddRange(
                 new Recipe { CategoryId = 1, UserId = 1, },
