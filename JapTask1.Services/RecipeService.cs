@@ -63,7 +63,6 @@ namespace JapTask1.Services.RecipeService
                 throw new ArgumentException("Can not add same ingredient");
             }
 
-
             var user = _context.Users.FirstOrDefault(u => u.Id == GetUserId());
 
             var newRecipe = new Recipe()

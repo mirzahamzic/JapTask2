@@ -31,7 +31,6 @@ namespace JapTask1.Tests
 
         private DbContextOptions<AppDbContext> _options;
         private AppDbContext _context;
-        private IMapper _mapper;
 
         [OneTimeSetUp]
         public void Setup()
