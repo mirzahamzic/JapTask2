@@ -42,8 +42,15 @@ namespace JapTask1.Database.Migrations
 							SET NOCOUNT ON;
 
 							select Categories.Name as CategoryName, Recipes.Name as RecipeName,
-							sum((dbo.RecipesIngredients.Quantity * Ingredients.PurchasedPrice/Ingredients.PurchasedQuantity)/1000) 
-							as RecipeTotalCost
+
+							case
+								when dbo.RecipesIngredients.Unit = 1 OR dbo.RecipesIngredients.Unit=3 
+								then
+									sum((dbo.RecipesIngredients.Quantity * Ingredients.PurchasedPrice/Ingredients.PurchasedQuantity)/1000)
+								else
+									sum(dbo.RecipesIngredients.Quantity * Ingredients.PurchasedPrice/Ingredients.PurchasedQuantity)
+							end
+
 							from Ingredients
 							join RecipesIngredients
 							on Ingredients.Id = RecipesIngredients.IngredientId
@@ -51,7 +58,7 @@ namespace JapTask1.Database.Migrations
 							on Recipes.Id = RecipesIngredients.RecipeId
 							join Categories
 							on Categories.Id=Recipes.CategoryId
-							group by Categories.Name, Recipes.Name
+							group by Categories.Name, Recipes.Name, dbo.RecipesIngredients.Unit
 							order by Categories.Name, RecipeTotalCost desc
 						END";
 
