@@ -6,6 +6,31 @@ namespace JapTask1.Database.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            var calculateTotalCosts = @"
+
+				CREATE FUNCTION [dbo].[CalculateTotalCosts]  
+				(  
+					   @recipesIngredientQuantity decimal
+					   , @ingredientPurchasedPrice decimal
+					   , @ingredientPurchasedQuantity decimal
+					   , @recipesIngredientUnit int
+				)  
+				RETURNS float  
+				AS  
+				BEGIN  
+					   DECLARE @TotalCost float;
+					   SELECT @TotalCost = case
+						when @recipesIngredientUnit = 1 OR @recipesIngredientUnit=3 
+						then
+							(@recipesIngredientQuantity * @ingredientPurchasedPrice/@ingredientPurchasedQuantity)/1000
+						else
+							@recipesIngredientQuantity * @ingredientPurchasedPrice/@ingredientPurchasedQuantity
+						end
+					   RETURN @TotalCost 
+				END
+			";
+
+
             var sp1 = @"CREATE procedure [dbo].[spRecipe_GetRecipesWith10Ingredients]
 
 						AS
@@ -14,14 +39,9 @@ namespace JapTask1.Database.Migrations
 							SET NOCOUNT ON;
 						
 						select Recipes.Name, Recipes.Id, 
-						case
-							when dbo.RecipesIngredients.Unit = 1 OR dbo.RecipesIngredients.Unit=3 
-							then
-								sum((dbo.RecipesIngredients.Quantity * Ingredients.PurchasedPrice/Ingredients.PurchasedQuantity)/1000)
-							else
-								sum(dbo.RecipesIngredients.Quantity * Ingredients.PurchasedPrice/Ingredients.PurchasedQuantity)
-						end	
-						as RecipeTotalCost,
+						
+						sum(dbo.CalculateTotalCosts(dbo.RecipesIngredients.Quantity, dbo.Ingredients.PurchasedPrice,
+						dbo.Ingredients.PurchasedQuantity,dbo.RecipesIngredients.Unit)) as RecipeTotalCost,
 						
 						count(dbo.RecipesIngredients.IngredientId) as TotalIngredients
 						from Ingredients
@@ -43,13 +63,8 @@ namespace JapTask1.Database.Migrations
 
 							select Categories.Name as CategoryName, Recipes.Name as RecipeName,
 
-							case
-								when dbo.RecipesIngredients.Unit = 1 OR dbo.RecipesIngredients.Unit=3 
-								then
-									sum((dbo.RecipesIngredients.Quantity * Ingredients.PurchasedPrice/Ingredients.PurchasedQuantity)/1000)
-								else
-									sum(dbo.RecipesIngredients.Quantity * Ingredients.PurchasedPrice/Ingredients.PurchasedQuantity)
-							end
+							sum(dbo.CalculateTotalCosts(dbo.RecipesIngredients.Quantity, dbo.Ingredients.PurchasedPrice,
+							dbo.Ingredients.PurchasedQuantity,dbo.RecipesIngredients.Unit)) as RecipeTotalCost	
 
 							from Ingredients
 							join RecipesIngredients
@@ -78,6 +93,7 @@ namespace JapTask1.Database.Migrations
 						order by UsageCount desc
 					end";
 
+            migrationBuilder.Sql(calculateTotalCosts);
             migrationBuilder.Sql(sp1);
             migrationBuilder.Sql(sp2);
             migrationBuilder.Sql(sp3);
@@ -85,7 +101,6 @@ namespace JapTask1.Database.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
         }
     }
 }
