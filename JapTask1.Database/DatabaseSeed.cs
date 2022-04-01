@@ -243,7 +243,7 @@ namespace JapTask1.Database
 
                     for (int i = 0; i < 500; i++)
                     {
-                        recipesIngredients.Add(new RecipeIngredient { IngredientId = random.Next(1, 7), RecipeId = random.Next(1, 50), Quantity = random.Next(10, 1000), Unit = i % 4 == 0 ? Units.Gr : Units.Kg });
+                        recipesIngredients.Add(new RecipeIngredient { IngredientId = random.Next(1, 7), RecipeId = random.Next(1, 50), Quantity = i % 4 == 0 ? random.Next(10, 1000) : random.NextDouble() * 10, Unit = i % 4 == 0 ? Units.Gr : Units.Kg });
                     }
 
                     await context.RecipesIngredients.AddRangeAsync(recipesIngredients);

@@ -77,7 +77,7 @@ namespace JapTask1.Database.Migrations
 							order by Categories.Name, RecipeTotalCost desc
 						END";
 
-            var sp3 = @"ALTER procedure [dbo].[spRecipe_GetUsage]
+            var sp3 = @"CREATE procedure [dbo].[spRecipe_GetUsage]
 						@MinCount decimal
 						, @MaxCount decimal
 						, @Unit int
