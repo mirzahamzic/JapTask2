@@ -153,6 +153,10 @@ namespace JapTask1.Tests
 
             Assert.True(testRecipe.AddRecipeIngredientDto.Any());
             Assert.AreEqual(testRecipe.AddRecipeIngredientDto.Count, 2);
+            Assert.AreEqual(testRecipe.AddRecipeIngredientDto[0].IngredientId, 1);
+            Assert.AreEqual(testRecipe.AddRecipeIngredientDto[1].IngredientId, 2);
+            Assert.AreEqual(testRecipe.AddRecipeIngredientDto[0].Quantity, 200);
+            Assert.AreEqual(testRecipe.AddRecipeIngredientDto[1].Quantity, 0.5);
 
             Assert.AreEqual(testRecipe.Name, dbRecipes.Name);
             Assert.AreEqual(testRecipe.Description, dbRecipes.Description);
