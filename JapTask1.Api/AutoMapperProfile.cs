@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using JapTask1.Common.Enums;
 using JapTask1.Common.Helpers;
 using JapTask1.Core.Dtos;
 using JapTask1.Core.Dtos.Request;
@@ -26,7 +27,8 @@ namespace JapTask1.Mapper
 
             CreateMap<RecipeIngredient, GetIngredientDto>()
             .ForMember(dest => dest.Name, o => o.MapFrom(src => src.Ingredient.Name))
-            .ForMember(dest => dest.Price, o => o.MapFrom(src => Calculator.PricePerIngredient(src.Ingredient.PurchasedQuantity, src.Ingredient.PurchasedUnitOfMeasure, src.Ingredient.PurchasedPrice, src.Unit, src.Quantity)));
+            .ForMember(dest => dest.Price, o => o.MapFrom(src => Calculator.PricePerIngredient(src.Ingredient.PurchasedQuantity, src.Ingredient.PurchasedUnitOfMeasure, src.Ingredient.PurchasedPrice, src.Unit, src.Quantity)))
+            .ForMember(dest => dest.Unit, o => o.MapFrom(src => Enum.GetName(typeof(Units), src.Unit)));
 
             CreateMap<Category, GetCategoryDto>();
             CreateMap<Ingredient, IngredientDto>();

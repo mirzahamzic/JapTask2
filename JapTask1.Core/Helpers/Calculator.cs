@@ -28,7 +28,7 @@ namespace JapTask1.Common.Helpers
 
                 }
             }
-            return totalCost;
+            return Math.Round(totalCost, 2);
         }
 
 
@@ -45,7 +45,7 @@ namespace JapTask1.Common.Helpers
                 pricePerIng = (pPrice * quantity) / pQuantity;
             };
 
-            return pricePerIng;
+            return Math.Round(pricePerIng, 2);
         }
     }
 }

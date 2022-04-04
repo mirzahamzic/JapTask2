@@ -101,7 +101,7 @@ namespace JapTask1.Tests
         }
 
         [Test]
-        public async Task SaveRecipe_AddRecipe_CheckTheValuesFromDB()
+        public async Task SaveRecipe_CheckTheValuesFromDB()
         {
             //arrange
             var testIngredients = new List<AddRecipeIngredientDto>();
@@ -122,11 +122,11 @@ namespace JapTask1.Tests
             //assert
             var dbRecipes = await _context.Recipes.FirstOrDefaultAsync(r => r.Name == testRecipe.Name);
 
+            Assert.True(testRecipe.AddRecipeIngredientDto.Any());
             Assert.AreEqual(testRecipe.Name, dbRecipes.Name);
             Assert.AreEqual(testRecipe.Description, dbRecipes.Description);
             Assert.AreEqual(testRecipe.CategoryId, dbRecipes.CategoryId);
             Assert.IsNotNull(dbRecipes.CreatedAt);
-            Assert.True(testRecipe.AddRecipeIngredientDto.Any());
         }
         [Test]
         public async Task SaveRecipe_AddRecipeWithMultiIngredients_CheckTheValuesFromDB()
@@ -151,11 +151,13 @@ namespace JapTask1.Tests
             //assert
             var dbRecipes = await _context.Recipes.FirstOrDefaultAsync(r => r.Name == testRecipe.Name);
 
+            Assert.True(testRecipe.AddRecipeIngredientDto.Any());
+            Assert.AreEqual(testRecipe.AddRecipeIngredientDto.Count, 2);
+
             Assert.AreEqual(testRecipe.Name, dbRecipes.Name);
             Assert.AreEqual(testRecipe.Description, dbRecipes.Description);
             Assert.AreEqual(testRecipe.CategoryId, dbRecipes.CategoryId);
             Assert.IsNotNull(dbRecipes.CreatedAt);
-            Assert.True(testRecipe.AddRecipeIngredientDto.Any());
         }
 
         [TestCase(1)]

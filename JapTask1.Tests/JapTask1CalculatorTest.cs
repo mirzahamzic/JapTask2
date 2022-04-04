@@ -44,24 +44,25 @@ namespace JapTask1.Tests
                 Unit = Units.Gr,
             };
 
-            var result = Calculator.PricePerIngredient(
+            var recipeIngredientCost = Calculator.PricePerIngredient(
                         ingredient.PurchasedQuantity,
                         ingredient.PurchasedUnitOfMeasure,
                         ingredient.PurchasedPrice,
                         recipeIngredient.Unit,
                         recipeIngredient.Quantity);
 
-            Assert.AreEqual(5, result);
+            var expectedResult = 5;
+            Assert.AreEqual(expectedResult, recipeIngredientCost);
         }
 
         [Test]
-        public void IngredientUnitCost2_Ingredient_GetCorrectCalculation()
+        public void IngredientUnitCost2_Ingredient_GetCorrectCalculationWithTwoDecimalPlaces()
         {
             var ingredient = new Ingredient()
             {
                 Name = "Test ingredient",
-                PurchasedQuantity = 25,
-                PurchasedPrice = 250,
+                PurchasedQuantity = 25.70,
+                PurchasedPrice = 250.33,
                 PurchasedUnitOfMeasure = Units.Kg,
                 CreatedAt = DateTime.Now.AddDays(-1)
             };
@@ -81,18 +82,19 @@ namespace JapTask1.Tests
                 RecipeId = recipe.Id,
                 Ingredient = ingredient,
                 IngredientId = ingredient.Id,
-                Quantity = 1500,
-                Unit = Units.Gr,
+                Quantity = 0.37,
+                Unit = Units.Kg,
             };
 
-            var result = Calculator.PricePerIngredient(
+            var recipeIngredientCost = Calculator.PricePerIngredient(
                         ingredient.PurchasedQuantity,
                         ingredient.PurchasedUnitOfMeasure,
                         ingredient.PurchasedPrice,
                         recipeIngredient.Unit,
                         recipeIngredient.Quantity);
 
-            Assert.AreEqual(15, result);
+            var expectedResult = 3.60;
+            Assert.AreEqual(expectedResult, recipeIngredientCost);
         }
 
         [Test]
@@ -143,18 +145,19 @@ namespace JapTask1.Tests
                  }
             };
 
-            var result = Calculator.RecipeTotalCost(recipe);
-            Assert.AreEqual(20, result);
+            var recipeTotalCost = Calculator.RecipeTotalCost(recipe);
+            var expectedResult = 20;
+            Assert.AreEqual(expectedResult, recipeTotalCost);
         }
 
         [Test]
-        public void RecipeTotalCost2_Recipe_CheckIfCalculateCorrectly()
+        public void RecipeTotalCost2_Recipe_CheckIfCalculateCorrectlyWithTwoDecimalPlaces()
         {
             var ingredient1 = new Ingredient()
             {
                 Name = "Test ingredient",
-                PurchasedQuantity = 1,
-                PurchasedPrice = 20,
+                PurchasedQuantity = 5.7,
+                PurchasedPrice = 250.68,
                 PurchasedUnitOfMeasure = Units.Kg,
                 CreatedAt = DateTime.Now.AddDays(-1)
             };
@@ -162,8 +165,8 @@ namespace JapTask1.Tests
             var ingredient2 = new Ingredient()
             {
                 Name = "Test ingredient 2",
-                PurchasedQuantity = 1,
-                PurchasedPrice = 20,
+                PurchasedQuantity = 1.78,
+                PurchasedPrice = 20.56,
                 PurchasedUnitOfMeasure = Units.Kg,
                 CreatedAt = DateTime.Now.AddDays(-1)
             };
@@ -181,7 +184,7 @@ namespace JapTask1.Tests
                         Id = 1,
                         Ingredient = ingredient1,
                         IngredientId= ingredient1.Id,
-                        Quantity = 1000,
+                        Quantity = 850,
                         Unit = Units.Gr,
                     },
                      new RecipeIngredient()
@@ -189,14 +192,15 @@ namespace JapTask1.Tests
                         Id = 2,
                         Ingredient = ingredient2,
                         IngredientId = ingredient2.Id,
-                        Quantity = 1000,
-                        Unit = Units.Gr,
+                        Quantity = 0.45,
+                        Unit = Units.Kg,
                     },
                  }
             };
 
-            var result = Calculator.RecipeTotalCost(recipe);
-            Assert.AreEqual(40, result);
+            var recipeTotalCost = Calculator.RecipeTotalCost(recipe);
+            var expectedResult = 42.58;
+            Assert.AreEqual(expectedResult, recipeTotalCost);
         }
 
     }

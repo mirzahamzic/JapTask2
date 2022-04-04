@@ -26,7 +26,7 @@ namespace JapTask1.Database.Migrations
 						else
 							@recipesIngredientQuantity * @ingredientPurchasedPrice/@ingredientPurchasedQuantity
 						end
-					   RETURN @TotalCost 
+					   RETURN ROUND(@TotalCost,2) 
 				END
 			";
 
@@ -38,20 +38,20 @@ namespace JapTask1.Database.Migrations
 	
 							SET NOCOUNT ON;
 						
-						select Recipes.Name, Recipes.Id, 
+						SELECT Recipes.Name, Recipes.Id, 
 						
-						sum(dbo.CalculateTotalCosts(dbo.RecipesIngredients.Quantity, dbo.Ingredients.PurchasedPrice,
-						dbo.Ingredients.PurchasedQuantity,dbo.RecipesIngredients.Unit)) as RecipeTotalCost,
+						SUM(dbo.CalculateTotalCosts(dbo.RecipesIngredients.Quantity, dbo.Ingredients.PurchasedPrice,
+						dbo.Ingredients.PurchasedQuantity,dbo.RecipesIngredients.Unit)) AS RecipeTotalCost,
 						
-						count(dbo.RecipesIngredients.IngredientId) as TotalIngredients
-						from Ingredients
-						join RecipesIngredients
-						on Ingredients.Id = RecipesIngredients.IngredientId
-						join Recipes
-						on Recipes.Id = RecipesIngredients.RecipeId
-						group by Recipes.Name, Recipes.Id, dbo.RecipesIngredients.Unit
-						having count(dbo.RecipesIngredients.IngredientId)>=10
-						order by TotalIngredients desc
+						COUNT(dbo.RecipesIngredients.IngredientId) AS TotalIngredients
+						FROM Ingredients
+						JOIN RecipesIngredients
+						ON Ingredients.Id = RecipesIngredients.IngredientId
+						JOIN Recipes
+						ON Recipes.Id = RecipesIngredients.RecipeId
+						GROUP BY Recipes.Name, Recipes.Id, dbo.RecipesIngredients.Unit
+						HAVING count(dbo.RecipesIngredients.IngredientId)>=10
+						ORDER BY TotalIngredients desc
 						END";
 
             var sp2 = @"CREATE PROCEDURE [dbo].[spRecipe_GetAllByCategoryName]
@@ -61,37 +61,37 @@ namespace JapTask1.Database.Migrations
 	
 							SET NOCOUNT ON;
 
-							select Categories.Name as CategoryName, Recipes.Name as RecipeName,
+							SELECT Categories.Name as CategoryName, Recipes.Name AS RecipeName,
 
-							sum(dbo.CalculateTotalCosts(dbo.RecipesIngredients.Quantity, dbo.Ingredients.PurchasedPrice,
-							dbo.Ingredients.PurchasedQuantity,dbo.RecipesIngredients.Unit)) as RecipeTotalCost	
+							SUM(dbo.CalculateTotalCosts(dbo.RecipesIngredients.Quantity, dbo.Ingredients.PurchasedPrice,
+							dbo.Ingredients.PurchasedQuantity,dbo.RecipesIngredients.Unit)) AS RecipeTotalCost	
 
-							from Ingredients
-							join RecipesIngredients
-							on Ingredients.Id = RecipesIngredients.IngredientId
-							join Recipes
-							on Recipes.Id = RecipesIngredients.RecipeId
-							join Categories
-							on Categories.Id=Recipes.CategoryId
-							group by Categories.Name, Recipes.Name, dbo.RecipesIngredients.Unit
-							order by Categories.Name, RecipeTotalCost desc
+							FROM Ingredients
+							JOIN RecipesIngredients
+							ON Ingredients.Id = RecipesIngredients.IngredientId
+							JOIN Recipes
+							ON Recipes.Id = RecipesIngredients.RecipeId
+							JOIN Categories
+							ON Categories.Id=Recipes.CategoryId
+							GROUP BY Categories.Name, Recipes.Name, dbo.RecipesIngredients.Unit
+							ORDER BY Categories.Name, RecipeTotalCost desc
 						END";
 
             var sp3 = @"CREATE procedure [dbo].[spRecipe_GetUsage]
 						@MinCount decimal
 						, @MaxCount decimal
 						, @Unit int
-					as 
-					begin
+					AS 
+					BEGIN
 
-					select count (IngredientId) as UsageCount, Ingredients.Name
-						from RecipesIngredients
-						join Ingredients
-						on RecipesIngredients.IngredientId = Ingredients.Id 
-						where RecipesIngredients.Quantity between @MinCount and @MaxCount AND RecipesIngredients.Unit=@Unit 
-						group by Ingredients.Name
-						order by UsageCount desc
-					end";
+					SELECT COUNT (IngredientId) AS UsageCount, Ingredients.Name
+						FROM RecipesIngredients
+						JOIN Ingredients
+						ON RecipesIngredients.IngredientId = Ingredients.Id 
+						WHERE RecipesIngredients.Quantity between @MinCount and @MaxCount AND RecipesIngredients.Unit=@Unit 
+						GROUP BY Ingredients.Name
+						ORDER BY UsageCount desc
+					END";
 
             migrationBuilder.Sql(calculateTotalCosts);
             migrationBuilder.Sql(sp1);

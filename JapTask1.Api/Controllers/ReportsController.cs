@@ -18,23 +18,23 @@ namespace JapTask1.Api.Controllers
 
         // GET: api/<ReportsController>
         [HttpGet("firstStoredProcedure")]
-        public async Task<ActionResult> FirstSp()
+        public async Task<IActionResult> FirstSp()
         {
             return Ok(await _reportService.FirstSp());
         }
 
         // GET: api/<ReportsController>
         [HttpGet("secondStoredProcedure")]
-        public async Task<ActionResult> SecondSp()
+        public async Task<IActionResult> SecondSp()
         {
             return Ok(await _reportService.SecondSp());
         }
 
         // POST: api/<ReportsController>
         [HttpGet("thirdStoredProcedure")]
-        public async Task<ActionResult> ThirdSp([FromQuery] double min, double max, int unit)
+        public async Task<IActionResult> ThirdSp([FromQuery] double minIngredientQuantity, double maxIngredientQuantity, int unitOfMeasure)
         {
-            return Ok(await _reportService.ThirdSp(min, max, unit));
+            return Ok(await _reportService.ThirdSp(minIngredientQuantity, maxIngredientQuantity, unitOfMeasure));
         }
 
     }

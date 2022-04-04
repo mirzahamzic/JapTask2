@@ -55,9 +55,9 @@ namespace JapTask1.Services
 
         }
 
-        public async Task<ServiceResponse<List<ThirdSpDto>>> ThirdSp(double min, double max, int unit)
+        public async Task<ServiceResponse<List<ThirdSpDto>>> ThirdSp(double minIngredientQuantity, double maxIngredientQuantity, int unitOfMeasure)
         {
-            string sql = $"exec dbo.spRecipe_GetUsage {min}, {max}, {unit}";
+            string sql = $"exec dbo.spRecipe_GetUsage {minIngredientQuantity}, {maxIngredientQuantity}, {unitOfMeasure}";
 
             var list = await _context.ThirdSpDto
                             .FromSqlRaw(sql)
